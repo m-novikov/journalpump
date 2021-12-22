@@ -736,7 +736,7 @@ class JournalPump(ServiceDaemon, Tagged):
 
             return JournalObjectHandler(jobject, reader, self).process()
         except StopIteration:
-            self.log.debug("No more journal entries to read")
+            self.log.warning("DEBUG: No more journal entries to read")
             return False, 0
         except Exception as ex:  # pylint: disable=broad-except
             self.log.exception("Unexpected exception while handling entry for %s", reader.name)
@@ -751,6 +751,7 @@ class JournalPump(ServiceDaemon, Tagged):
 
         limit_bytes = reader.get_write_limit_bytes()
         limit_count = reader.get_write_limit_message_count()
+        self.log.warning("DEBUG: bytes=%s, count=%s", limit_bytes, limit_count)
 
         for _ in range(chunk_size):
             if limit_bytes <= 0:
@@ -760,6 +761,7 @@ class JournalPump(ServiceDaemon, Tagged):
                 return False, lines
 
             has_more, bytes_read = self.read_single_message(reader)
+            self.log.warning("DEBUG: has_more %r %d", has_more, bytes_read)
 
             if bytes_read:
                 limit_bytes -= bytes_read

@@ -23,6 +23,7 @@ class LogFiles:
 
     def __init__(self, destination: Path) -> None:
         orig_path = Path(__file__).parent / "data" / "rotated_logs"
+        print(list(orig_path.glob("*")))
         self._orig_log_files: List[Path] = list(reversed(sorted(orig_path.glob("*.journal"))))
         self._rotate_to: Optional[Path] = None
         self._destination: Path = destination
@@ -45,6 +46,7 @@ class LogFiles:
 
         shutil.copyfile(log_file, self._destination / "user-1000.journal")
         self._rotate_to = self._destination / log_file.name
+        print("DST", list(self._destination.glob("*")))
 
     def remove(self, *, last: int):
         for _ in range(last):
